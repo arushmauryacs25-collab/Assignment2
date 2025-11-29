@@ -4,36 +4,30 @@
 #include <stdlib.h>
 #include <time.h>
 
-// I am keeping these sizes small so things don't break
+
 #define MAX_BULLETS 20
 
-// Player position
 int px = 5;
 int py = 10;
 
-// Two normal enemies
 int ex1 = 40, ey1 = 10;
 int ex2 = 55, ey2 = 15;
 
-// Bullet storage
 int bx[MAX_BULLETS];
 int by[MAX_BULLETS];
 int bflag[MAX_BULLETS];
 
-// Boss details
 int bossX = 80;
 int bossY = 8;
 int bossHP = 5;
 int bossOn = 0;
 
-// Game indicators
 int score = 0;
 int lives = 3;
 int speedDelay = 90;
 int over = 0;
 
 
-// Move cursor function
 void moveCursor(int x, int y) {
     COORD c;
     c.X = x;
@@ -42,29 +36,27 @@ void moveCursor(int x, int y) {
 }
 
 
-// just a simple hit check
 int hit(int a1, int b1, int a2, int b2) {
     return (a1 == a2 && b1 == b2);
 }
 
 
-// draw everything on screen
 void draw() {
     system("cls");
     printf("Score : %d      Lives : %d\n\n", score, lives);
 
-    // player <^>
+    
     moveCursor(px, py);
     printf("<^>");
 
-    // normal enemies
+    
     moveCursor(ex1, ey1);
     printf("[-X-]");
 
     moveCursor(ex2, ey2);
     printf("[-X-]");
 
-    // bullets
+    
     for(int i = 0; i < MAX_BULLETS; i++){
         if(bflag[i]){
             moveCursor(bx[i], by[i]);
@@ -72,7 +64,7 @@ void draw() {
         }
     }
 
-    // boss
+    
     if(bossOn){
         moveCursor(bossX, bossY);
         printf("[=BOSS=] HP:%d", bossHP);
@@ -80,7 +72,7 @@ void draw() {
 }
 
 
-// reset enemies randomly
+
 void resetEnemy1(){
     ex1 = 40;
     ey1 = (rand() % 15) + 4;
@@ -92,33 +84,31 @@ void resetEnemy2(){
 }
 
 
-// when boss comes
 void spawnBoss(){
     bossOn = 1;
     bossHP = 5;
     bossX = 80;
     bossY = (rand() % 12) + 4;
 
-    // just some alert sound
+    
     Beep(400, 200);
     Beep(600, 200);
 }
 
 
-// bullet physics
 void updateBullets(){
     for(int i = 0; i < MAX_BULLETS; i++){
         if(bflag[i] == 1){
 
             bx[i]++;
 
-            // if bullet goes too far
+            
             if(bx[i] > 100){
                 bflag[i] = 0;
                 continue;
             }
 
-            // hits enemy 1
+            
             if(hit(bx[i], by[i], ex1, ey1)){
                 score++;
                 resetEnemy1();
@@ -127,7 +117,7 @@ void updateBullets(){
                 continue;
             }
 
-            // hits enemy 2
+            
             if(hit(bx[i], by[i], ex2, ey2)){
                 score++;
                 resetEnemy2();
@@ -136,7 +126,7 @@ void updateBullets(){
                 continue;
             }
 
-            // hits boss
+            
             if(bossOn){
                 if(bx[i] >= bossX && by[i] == bossY){
                     bossHP--;
@@ -156,10 +146,10 @@ void updateBullets(){
 }
 
 
-// enemy movements
+
 void updateEnemies(){
 
-    // enemy 1
+    
     ex1--;
     if(rand() % 6 == 0) ey1 += (rand() % 3) - 1;
     if(ex1 <= 0){
@@ -167,7 +157,7 @@ void updateEnemies(){
         resetEnemy1();
     }
 
-    // enemy 2 (faster)
+    
     ex2 -= 2;
     if(rand() % 4 == 0) ey2 += (rand() % 3) - 1;
     if(ex2 <= 0){
@@ -175,7 +165,7 @@ void updateEnemies(){
         resetEnemy2();
     }
 
-    // boss movement
+    
     if(bossOn){
         bossX--;
 
@@ -188,7 +178,7 @@ void updateEnemies(){
 }
 
 
-// if enemy touches player
+
 void checkPlayerHit(){
 
     if(hit(px, py, ex1, ey1)){
@@ -215,7 +205,6 @@ void checkPlayerHit(){
 }
 
 
-// boss appears after certain score
 void difficultyCheck(){
     if(score >= 10 && bossOn == 0){
         spawnBoss();
@@ -223,7 +212,6 @@ void difficultyCheck(){
 }
 
 
-// ================== MAIN GAME LOOP ==================
 void playGame(){
 
     px = 5;
@@ -259,7 +247,7 @@ void playGame(){
             if(key == 's' && py < 20) py++;
 
             if(key == ' '){
-                // shoot a bullet (find an empty one)
+                
                 for(int i = 0; i < MAX_BULLETS; i++){
                     if(bflag[i] == 0){
                         bflag[i] = 1;
@@ -279,8 +267,6 @@ void playGame(){
     Beep(180, 500);
 }
 
-
-// ====================== MENU ======================
 void menu(){
     while(1){
         system("cls");
@@ -316,7 +302,6 @@ void menu(){
 }
 
 
-// ====================== MAIN ======================
 int main(){
     menu();
     return 0;
